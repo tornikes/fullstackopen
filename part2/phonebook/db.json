@@ -7,7 +7,7 @@
     },
     {
       "name": "Dan Abramov",
-      "number": "12-43-234345",
+      "number": "343556677",
       "id": 3
     },
     {
@@ -16,10 +16,9 @@
       "id": 4
     },
     {
-      "name": "Martin Fowler",
-      "number": "11111111111",
-      "id": 5,
-      "newNumber": "111111"
+      "name": "Adam Smith",
+      "number": "354434",
+      "id": 6
     }
   ]
 }
