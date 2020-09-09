@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import SearchFilter from './components/SearchFilter';
 import PersonForm from './components/PersonForm';
 import PersonList from './components/PersonList';
-import axios from 'axios';
+import service from './service';
 
 const App = () => {
     const [persons, setPersons] = useState([
@@ -13,20 +13,38 @@ const App = () => {
     const [filterText, setFilterText] = useState('');
 
     useEffect(() => {
-        axios
-            .get('http://localhost:3001/persons')
-            .then(res => setPersons(res.data));
+        service.fetchAll()
+            .then(data => setPersons(data));
     }, []);
 
     function handleSubmit(e) {
         e.preventDefault();
-        if (persons.findIndex(p => p.name === newName) === -1) {
-            setPersons([...persons, { name: newName, number: newNumber }]);
+        const p = persons.find(p => p.name === newName);
+        if (!p) {
+            service.addPerson({ name: newName, number: newNumber })
+                .then(person => {
+                    setPersons([...persons, person]);
+                });
             setNewName('');
             setNewNumber('');
         } else {
-            alert(`${newName} is already added to phonebook`);
+            // eslint-disable-next-line no-restricted-globals
+            if (confirm(`${name} is alreay added to the phonebook, replace the old number with a new one?`)) {
+                const pers = { ...p, number: newNumber };                
+                service.updatePerson(p.id, pers)
+                    .then(data => {
+                        setPersons(persons.map(pe => pe.id === p.id ? data : pe));
+                    })
+            }
         }
+    }
+
+    function handleDeletion(id) {
+        service
+            .deletePerson(id)
+            .then(() => {
+                setPersons(persons.filter(p => p.id !== id));
+            })
     }
 
     function handleChange(e) {
@@ -54,7 +72,7 @@ const App = () => {
         <div>
             <h2>Phonebook</h2>
             <SearchFilter filterText={filterText} handleFilterChange={handleFilterChange} />
-            <PersonForm 
+            <PersonForm
                 newName={newName}
                 handleChange={handleChange}
                 newNumber={newNumber}
@@ -62,7 +80,10 @@ const App = () => {
                 handleSubmit={handleSubmit}
             />
             <h2>Numbers</h2>
-            <PersonList persons={applyFilter()} />
+            <PersonList
+                persons={applyFilter()}
+                onDelete={handleDeletion}
+            />
         </div>
     )
 }
