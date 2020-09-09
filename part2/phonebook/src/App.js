@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import SearchFilter from './components/SearchFilter';
 import PersonForm from './components/PersonForm';
 import PersonList from './components/PersonList';
+import axios from 'axios';
 
 const App = () => {
     const [persons, setPersons] = useState([
@@ -10,6 +11,12 @@ const App = () => {
     const [newName, setNewName] = useState('');
     const [newNumber, setNewNumber] = useState('');
     const [filterText, setFilterText] = useState('');
+
+    useEffect(() => {
+        axios
+            .get('http://localhost:3001/persons')
+            .then(res => setPersons(res.data));
+    }, []);
 
     function handleSubmit(e) {
         e.preventDefault();
