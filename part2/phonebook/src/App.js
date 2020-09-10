@@ -24,12 +24,12 @@ const App = () => {
     const [newName, setNewName] = useState('');
     const [newNumber, setNewNumber] = useState('');
     const [filterText, setFilterText] = useState('');
-    const [notication, setNotification] = useState('null');
+    const [notication, setNotification] = useState(null);
     const [errorMsg, setErrormsg] = useState(null);
 
     useEffect(() => {
         service.fetchAll()
-            .then(data => setPersons(data));
+            .then(data => setPersons(data.persons));
     }, []);
 
     function handleSubmit(e) {
@@ -38,6 +38,7 @@ const App = () => {
         if (!p) {
             service.addPerson({ name: newName, number: newNumber })
                 .then(person => {
+                    console.log(person);
                     setPersons([...persons, person]);
                     setNotification(`Added ${person.name}`);
                     setTimeout(() => {
