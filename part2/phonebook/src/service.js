@@ -8,7 +8,7 @@ function fetchAll() {
 }
 
 function addPerson(person) {
-    return axios.post(baseUrl, person).then(res => res.data);
+    return axios.post(baseUrl, person);
 }
 
 function deletePerson(id) {

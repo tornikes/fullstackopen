@@ -38,11 +38,16 @@ const App = () => {
         if (!p) {
             service.addPerson({ name: newName, number: newNumber })
                 .then(person => {
-                    console.log(person);
-                    setPersons([...persons, person]);
-                    setNotification(`Added ${person.name}`);
+                    setPersons([...persons, person.data]);
+                    setNotification(`Added ${person.data.name}`);
                     setTimeout(() => {
                         setNotification(null);
+                    }, 5000);
+                })
+                .catch(err => {
+                    setErrormsg(err.response.data.error);
+                    setTimeout(() => {
+                        setErrormsg(null);
                     }, 5000);
                 });
             setNewName('');
@@ -53,6 +58,7 @@ const App = () => {
                 const pers = { ...p, number: newNumber };
                 service.updatePerson(p.id, pers)
                     .then(data => {
+                        console.log(data);
                         setPersons(persons.map(pe => pe.id === p.id ? data : pe));
                         setNewName('');
                         setNewNumber('');
@@ -62,8 +68,9 @@ const App = () => {
                         }, 5000);
                     })
                     .catch(err => {
-                        setErrormsg(`Information about ${pers.name} has already been removed from the server.`);
-                        setPersons(persons.filter(pe => p.id !== pe.id));
+                        console.log(err.response);
+                        setErrormsg(err.response.data.error);
+                        // setPersons(persons.filter(pe => p.id !== pe.id));
                         setTimeout(() => {
                             setErrormsg(null);
                         }, 5000);
