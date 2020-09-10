@@ -1,3 +1,4 @@
 node_modules/
 part2/rest-countries/.env
+part4/.env
 build/
