@@ -2,6 +2,7 @@ const app = require('../app');
 const mongoose = require('mongoose');
 const supertest = require('supertest');
 const BlogEntry = require('../models/blogEntry');
+const User = require('../models/user');
 
 const seedData = [
     {
@@ -35,6 +36,8 @@ const api = supertest(app);
 
 beforeEach(async () => {
     await BlogEntry.deleteMany({});
+    await User.deleteMany({});
+    await api.post('/api/users').send({ username: 'zombie', password: 'eat-the-living', name: 'nameless' });
     await Promise.all(seedData.map(data => new BlogEntry(data).save()));
 });
 
@@ -51,13 +54,15 @@ it('should give every entry a property called "id"', async () => {
 });
 
 it('should add a new entry do the database', async () => {
+    const user = await api.post('/api/login')
+        .send({ username: 'zombie', password: 'eat-the-living' });   
     const nextEntry = {
         title: 'The Little JavaScripter',
         author: 'Douglas Crockford',
         likes: 10000,
         url: 'https://javascript'
     };
-    const resp = await api.post('/api/blogs').send(nextEntry);
+    const resp = await api.post('/api/blogs').send(nextEntry).set('Authorization', `bearer ${user.body.token}`);
     for (let [key, value] of Object.entries(nextEntry)) {
         expect(resp.body[key]).toBe(value);
     }
@@ -66,12 +71,14 @@ it('should add a new entry do the database', async () => {
 });
 
 it('should default likes property to 0', async () => {
+    const user = await api.post('/api/login')
+        .send({ username: 'zombie', password: 'eat-the-living' });
     const nextEntry = {
         title: 'The Little JavaScripter',
         author: 'Douglas Crockford',
         url: 'https://javascript'
     };
-    const resp = await api.post('/api/blogs').send(nextEntry);
+    const resp = await api.post('/api/blogs').send(nextEntry).set('Authorization', `bearer ${user.body.token}`);
     expect(resp.body.likes).toBeDefined();
     expect(resp.body.likes).toBe(0);
 });
@@ -84,11 +91,14 @@ it('should return 400 if url or title is missing', async () => {
 });
 
 it('deletes entry using id', async () => {
-    const data = await api.get('/api/blogs');
-    const secondItem = data.body[1];
-    const removed = await api.delete(`/api/blogs/${secondItem.id}`);
+    const user = await api.post('/api/login')
+        .send({ username: 'zombie', password: 'eat-the-living' });
+    const created = await api.post('/api/blogs')
+        .send({ author: 'zombie', title: 'zombieland', url: 'zzzzz', likes: 999 })
+        .set('Authorization', `bearer ${user.body.token}`);
+    const removed = await api.delete(`/api/blogs/${created.body.id}`).set('Authorization', `bearer ${user.body.token}`);
     const remaining = await api.get('/api/blogs');
-    expect(remaining.body.length).toBe(data.body.length - 1);
+    expect(remaining.body.length).toBe(seedData.length);
     for (let item of remaining.body) {
         expect(item).not.toEqual(removed);
     }

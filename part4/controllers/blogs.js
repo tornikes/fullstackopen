@@ -18,8 +18,13 @@ blogsRouter.post('/', async (req, res) => {
     if (typeof body.likes === 'undefined') {
         body.likes = 0;
     }
+    if (!body.token) {
+        return res.status(401).json({
+            error: 'No Token Provided'
+        });
+    }
     const decodedToken = jwt.verify(req.body.token, process.env.SECRET);
-    if (!body.token || !decodedToken.id) {
+    if (!decodedToken.id) {
         return res.status(401).json({ error: 'token missing or invalid' });
     }
     const author = await User.findById(decodedToken.id);
@@ -32,8 +37,26 @@ blogsRouter.post('/', async (req, res) => {
 });
 
 blogsRouter.delete('/:id', async (req, res) => {
-    const item = await Blog.findByIdAndDelete(req.params.id);
-    res.status(204).json(item);
+    if (!req.body.token) {
+        return res.status(401).json({
+            error: 'No token provided'
+        });
+    }
+    const decodedToken = jwt.verify(req.body.token, process.env.SECRET);
+    if (!decodedToken.id) {
+        return res.status(401).json({ error: 'token missing or invalid' });
+    }
+    const blog = await Blog.findById(req.params.id);
+    const user = await User.findById(decodedToken.id);
+    if (blog.user.toString() !== user.id) {
+        return res.status(401).json({
+            error: 'resource does not belong to user'
+        });
+    }
+    await blog.remove();
+    user.blogs = user.blogs.filter(b => b._id !== blog.id);
+    await user.save();
+    res.status(204).json(blog);
 });
 
 blogsRouter.put('/:id', async (req, res) => {
