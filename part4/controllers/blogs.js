@@ -30,7 +30,7 @@ blogsRouter.post('/', async (req, res) => {
     const author = await User.findById(decodedToken.id);
     body.user = author.id;
     const blog = new Blog(body);
-    const result = await blog.save();
+    const result = await (await blog.save()).execPopulate('user');
     author.blogs = author.blogs.concat(blog);
     await author.save();
     res.status(200).json(result);
@@ -56,11 +56,12 @@ blogsRouter.delete('/:id', async (req, res) => {
     await blog.remove();
     user.blogs = user.blogs.filter(b => b._id !== blog.id);
     await user.save();
-    res.status(204).json(blog);
+    res.json(blog);
 });
 
 blogsRouter.put('/:id', async (req, res) => {
     const updated = await Blog.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    await updated.execPopulate('user');
     res.json(updated);
 });
 

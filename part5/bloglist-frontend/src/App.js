@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import './App.css';
-import Blog from './components/Blog'
-import blogService from './services/blogs'
+import Blog from './components/Blog';
+import blogService from './services/blogs';
 import LoginForm from './components/LoginForm';
 import BlogForm from './components/BlogForm';
 import loginService from './services/login';
 import Notification from './components/Notification';
+import ToggleAble from './components/Toggleable';
 
 const App = () => {
     const [blogs, setBlogs] = useState([]);
@@ -14,19 +15,21 @@ const App = () => {
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
     const [isError, setIsError] = useState('');
+    const formRef = React.useRef();
 
     useEffect(() => {
-        blogService.getAll().then(blogs =>
-            setBlogs(blogs)
-        )
+        blogService.getAll().then(blogs => {
+            blogs.sort((b1, b2) => b2.likes - b1.likes);
+            setBlogs(blogs);
+        });
     }, []);
 
     useEffect(() => {
         let data = window.localStorage.getItem('loggedInUser');
         if (data) {
-            const user = JSON.parse(data)
-            setUser(user)
-            blogService.setToken(user.token)
+            const user = JSON.parse(data);
+            setUser(user);
+            blogService.setToken(user.token);
         }
     }, []);
 
@@ -62,11 +65,12 @@ const App = () => {
             setBlogs(blogs.concat(nextBlog));
             setMessage(`A new blog ${nextBlog.title} by ${nextBlog.author} added.`);
             setIsError(false);
+            formRef.current.toggleVisibility();
             setTimeout(() => {
                 setMessage('');
                 setIsError(false);
             }, 3000);
-        } catch(exception) {
+        } catch (exception) {
             console.log(exception);
         }
     }
@@ -74,6 +78,28 @@ const App = () => {
     function handleLogout() {
         window.localStorage.removeItem('loggedInUser');
         setUser(null);
+    }
+
+    async function handleLike(id, payload) {
+        try {
+            const nextBlog = await blogService.update(id, payload);
+            setBlogs(blogs.map(b => b.id === nextBlog.id ? nextBlog : b));
+        } catch (exception) {
+            console.log(exception);
+        }
+    }
+
+    async function handleRemove(blog) {
+        // eslint-disable-next-line no-restricted-globals
+        if (confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+            try {
+                const removed = await blogService.remove(blog.id);
+                console.log(removed);
+                setBlogs(blogs.filter(b => b.id !== removed.id));
+            } catch (exception) {
+                console.log(exception);
+            }
+        }
     }
 
     return (
@@ -89,11 +115,19 @@ const App = () => {
             {user && <>
                 <h1>Hello, {user.name}</h1>
                 <button onClick={handleLogout}>Logout</button>
-                <BlogForm submitBlogForm={submitBlogForm} />
+                <ToggleAble buttonLabel='New Blog' ref={formRef}>
+                    <BlogForm submitBlogForm={submitBlogForm} />
+                </ToggleAble>
             </>}
             {user && <h2>blogs</h2>}
             {user && blogs.map(blog =>
-                <Blog key={blog.id} blog={blog} />
+                <Blog
+                    key={blog.id}
+                    blog={blog}
+                    onLike={handleLike}
+                    userId={user.id}
+                    onRemove={handleRemove}
+                />
             )}
         </div>
     )
