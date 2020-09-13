@@ -4,7 +4,11 @@ const baseUrl = '/api/blogs'
 let token = null;
 
 const setToken = newToken => {
-    token = `bearer ${newToken}`
+    if (typeof newToken === 'string') {
+        token = `bearer ${newToken}`;
+    } else {
+        token = null;
+    }
 }
 
 const create = async newObject => {
@@ -20,6 +24,7 @@ const update = async (id, nextData) => {
     const config = {
         headers: { Authorization: token }
     };
+    console.log(nextData);
     const response = await axios.put(`${baseUrl}/${id}`, nextData, config);
     return response.data;
 };

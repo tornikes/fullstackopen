@@ -32,7 +32,7 @@ blogsRouter.post('/', async (req, res) => {
     const blog = new Blog(body);
     const result = await (await blog.save()).execPopulate('user');
     author.blogs = author.blogs.concat(blog);
-    await author.save();
+    await author.update();
     res.status(200).json(result);
 });
 

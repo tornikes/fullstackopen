@@ -77,8 +77,8 @@ const App = () => {
 
     function handleLogout() {
         window.localStorage.removeItem('loggedInUser');
+        blogService.setToken(null);
         setUser(null);
-        loginService.setToken(null);
     }
 
     async function handleLike(id, payload) {
@@ -95,7 +95,6 @@ const App = () => {
         if (confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
             try {
                 const removed = await blogService.remove(blog.id);
-                console.log(removed);
                 setBlogs(blogs.filter(b => b.id !== removed.id));
             } catch (exception) {
                 console.log(exception);

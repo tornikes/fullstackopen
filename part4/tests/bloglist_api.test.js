@@ -38,7 +38,8 @@ beforeEach(async () => {
     await BlogEntry.deleteMany({});
     await User.deleteMany({});
     await api.post('/api/users').send({ username: 'zombie', password: 'eat-the-living', name: 'nameless' });
-    await Promise.all(seedData.map(data => new BlogEntry(data).save()));
+    const user = await api.post('/api/login').send({ username: 'zombie', password: 'eat-the-living' });
+    await Promise.all(seedData.map(data => api.post('/api/blogs').send(data).set('Authorization', `bearer ${user.body.token}`)));
 });
 
 it('should get data correctly', async () => {
@@ -104,13 +105,15 @@ it('deletes entry using id', async () => {
     }
 });
 
-it('deletes entry using id', async () => {
+it('updates item using id', async () => {
     const data = await api.get('/api/blogs');
     const secondItem = data.body[1];
     const nextItem = {
         ...secondItem,
+        user: secondItem.user.id,
         likes: 12345
     };
+    console.log(nextItem);
     const resp = await api.put(`/api/blogs/${secondItem.id}`).send(nextItem);
     expect(resp.body.likes).toBe(nextItem.likes);
 });
