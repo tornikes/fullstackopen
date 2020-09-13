@@ -75,7 +75,7 @@ describe('bloglist app', function () {
                 cy.contains('Lambda the Ultimate Gerald Sussman').should('not.exist');
             });
 
-            it.only('should sort blogs by number of likes', function () {
+            it('should sort blogs by number of likes', function () {
                 const seedData = [
                     {
                         title: 'How to oop',
