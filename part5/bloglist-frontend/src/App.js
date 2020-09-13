@@ -78,6 +78,7 @@ const App = () => {
     function handleLogout() {
         window.localStorage.removeItem('loggedInUser');
         setUser(null);
+        loginService.setToken(null);
     }
 
     async function handleLike(id, payload) {

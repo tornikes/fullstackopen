@@ -30,7 +30,7 @@ const Blog = ({ blog, onLike, userId, onRemove }) => {
     return (
         <div style={blogStyle}>
             {blog.title} {blog.author} <button onClick={() => setExpanded(!expanded)}>{expanded ? 'Hide' : 'View'}</button>
-            {expanded && <div>
+            {expanded && <div className="additional-info">
                 <p>{blog.url}</p>
                 <p>Likes {blog.likes} <button onClick={likeBlog}>Like</button></p>
                 {blog.user && <p>{blog.user.name}</p>}
@@ -40,11 +40,11 @@ const Blog = ({ blog, onLike, userId, onRemove }) => {
     );
 }
 
-Blog.propTypes = {
-    onLike: PropTypes.func.isRequired,
-    onRemove: PropTypes.func.isRequired,
-    userId: PropTypes.string.isRequired,
-    blog: PropTypes.object.isRequired 
-};
+// Blog.propTypes = {
+//     onLike: PropTypes.func.isRequired,
+//     onRemove: PropTypes.func.isRequired,
+//     userId: PropTypes.string.isRequired,
+//     blog: PropTypes.object.isRequired 
+// };
 
 export default Blog
