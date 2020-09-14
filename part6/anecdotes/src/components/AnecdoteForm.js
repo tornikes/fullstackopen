@@ -1,17 +1,8 @@
 import React from 'react';
 import { createAnecdote } from '../reducers/anecdoteReducer';
-import { useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 
-export default function AnecdoteForm() {
-    const dispatch = useDispatch();
-
-    async function handleSubmit(e) {
-        e.preventDefault();
-        const contents = e.target.anecdote.value;
-        e.target.anecdote.value = '';
-        dispatch(createAnecdote(contents));
-    }
-
+function AnecdoteForm({ handleSubmit }) {
     return (
         <form onSubmit={handleSubmit}>
             <div><input name="anecdote" /></div>
@@ -19,3 +10,16 @@ export default function AnecdoteForm() {
         </form>
     );
 }
+
+function mapDispatchToProps(dispatch) {
+    return {
+        handleSubmit: async function(e) {
+            e.preventDefault();
+            const contents = e.target.anecdote.value;
+            e.target.anecdote.value = '';
+            dispatch(createAnecdote(contents));
+        }
+    }
+}
+
+export default connect(null, mapDispatchToProps)(AnecdoteForm);

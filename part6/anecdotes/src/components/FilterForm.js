@@ -1,20 +1,29 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 
-export default function FilterForm() {
-    const filter = useSelector(state => state.filter);
-    const dispatch = useDispatch();
-    function handleChange(e) {
-        dispatch({ type: 'SET_FILTER', data: { filter: e.target.value } })
-    }
-
+function FilterForm({ filter, handleChange }) {
     const style = {
         marginBottom: '1.5em'
     };
-
     return (
         <div style={style}>
             Filter: <input type='text' value={filter} onChange={handleChange} />
         </div>
     );
 }
+
+function mapStateToProps(state) {
+    return {
+        filter: state.filter
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        handleChange: function(e) {
+            dispatch({ type: 'SET_FILTER', data: { filter: e.target.value } })
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(FilterForm);
