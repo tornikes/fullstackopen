@@ -1,43 +1,43 @@
-const anecdotesAtStart = [
-  'If it hurts, do it more often',
-  'Adding manpower to a late software project makes it later!',
-  'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
-  'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
-  'Premature optimization is the root of all evil.',
-  'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.'
-];
+import { setNotification } from '../reducers/messageReducer';
+import anecdoteservice from '../anecdoteservice';
 
-const getId = () => (100000 * Math.random()).toFixed(0);
-
-const asObject = (anecdote) => {
-  return {
-    content: anecdote,
-    id: getId(),
-    votes: 0
-  }
-};
-
-const initialState = anecdotesAtStart.map(asObject)
-
-const reducer = (state = initialState, action) => {
-  switch(action.type) {
-    case 'VOTE': return state.map(anecdote => anecdote.id === action.data.id ? { ...anecdote, votes: anecdote.votes + 1 } : anecdote);
-    case 'NEW_ANECDOTE': return state.concat(asObject(action.data.anecdote));
-    default: return state;
-  }
+const reducer = (state = [], action) => {
+    switch (action.type) {
+        case 'VOTE': return state.map(anecdote => anecdote.id === action.data.anecdote.id ? action.data.anecdote : anecdote);
+        case 'ANECDOTES_FETCHED': return action.data;
+        case 'NEW_ANECDOTE': return [...state, action.data.anecdote];
+        default: return state;
+    }
 }
 
-export function createVote(id) {
-    return {
-        type: 'VOTE',
-        data: { id }
+export function createVote(anecdote) {
+    return async function (dispatch) {
+        const nextAnecdote = await anecdoteservice.vote({ ...anecdote, votes: anecdote.votes + 1 });
+        dispatch({
+            type: 'VOTE',
+            data: { anecdote: nextAnecdote }
+        });
     }
 }
 
 export function createAnecdote(anecdote) {
-    return {
-        type: 'NEW_ANECDOTE',
-        data: { anecdote }
+    return async function (dispatch) {
+        const nextAnecdote = await anecdoteservice.createAnecdote(anecdote);
+        dispatch({
+            type: 'NEW_ANECDOTE',
+            data: { anecdote: nextAnecdote }
+        });
+        dispatch(setNotification(`You created a new anecdote: ${nextAnecdote.content}`, 5));
+    }
+}
+
+export function initializeAnecdotes() {
+    return async function (dispatch) {
+        const anecdotes = await anecdoteservice.fetchAll();
+        dispatch({
+            type: 'ANECDOTES_FETCHED',
+            data: anecdotes
+        });
     }
 }
 
