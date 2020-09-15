@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useField } from './hooks';
 import { Link, Switch, Route, useRouteMatch, useHistory } from 'react-router-dom';
 
 const Menu = () => {
@@ -18,8 +19,8 @@ const AnecdoteList = ({ anecdotes }) => (
     <div>
         <h2>Anecdotes</h2>
         <ul>
-            {anecdotes.map(anecdote => 
-            <li key={anecdote.id} ><Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link></li>
+            {anecdotes.map(anecdote =>
+                <li key={anecdote.id} ><Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link></li>
             )}
         </ul>
     </div>
@@ -48,25 +49,37 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
-    const [content, setContent] = useState('');
-    const [author, setAuthor] = useState('');
-    const [info, setInfo] = useState('');
+    const content = useField('text');
+    const author = useField('text');
+    const info = useField('text');
     const history = useHistory();
-
 
     const handleSubmit = (e) => {
         e.preventDefault()
         props.addNew({
-            content,
-            author,
-            info,
+            content: content.value,
+            author: author.value,
+            info: info.value,
             votes: 0
         });
         history.push('/');
-        props.setNotification(`Added a new anecdote ${content} by ${author}`);
+        props.setNotification(`Added a new anecdote ${content.value} by ${author.value}`);
         setTimeout(() => {
             props.setNotification('');
         }, 10000);
+    }
+
+    const handleReset = e => {
+        e.preventDefault();
+        content.reset();
+        author.reset();
+        info.reset();
+    }
+
+    function exclude(propname, obj) {
+        const prop = { ...obj }
+        delete prop[propname];
+        return prop;
     }
 
     return (
@@ -75,17 +88,18 @@ const CreateNew = (props) => {
             <form onSubmit={handleSubmit}>
                 <div>
                     content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
+          <input name='content' {...exclude('reset', content)} />
                 </div>
                 <div>
                     author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
+          <input name='author' {...exclude('reset', author)} />
                 </div>
                 <div>
                     url for more info
-          <input name='info' value={info} onChange={(e) => setInfo(e.target.value)} />
+          <input name='info' {...exclude('reset', info)} />
                 </div>
                 <button>create</button>
+                <button onClick={handleReset}>reset</button>
             </form>
         </div>
     )
@@ -161,7 +175,7 @@ const App = () => {
                     <About />
                 </Route>
                 <Route path='/create'>
-                    <CreateNew 
+                    <CreateNew
                         addNew={addNew}
                         setNotification={setNotification}
                     />
