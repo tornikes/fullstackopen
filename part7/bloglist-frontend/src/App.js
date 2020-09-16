@@ -38,12 +38,8 @@ const App = () => {
     }
 
     async function submitBlogForm(blog) {
-        try {
-            dispatch(createBlog(blog));
-            formRef.current.toggleVisibility();
-        } catch (exception) {
-            console.log(exception);
-        }
+        dispatch(createBlog(blog));
+        formRef.current.toggleVisibility();
     }
 
     function handleLogout() {
@@ -64,7 +60,7 @@ const App = () => {
     return (
         <div>
             <Navbar user={user} handleLogout={handleLogout} />
-            {message && <Notification message={message} />}            
+            {message && <Notification message={message} />}
             <Switch>
                 <Route path='/users/:id'>
                     <User match={match} />

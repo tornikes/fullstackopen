@@ -4,12 +4,13 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 
 blogsRouter.get('/', async (req, res) => {
-    const entries = await Blog.find({}).populate('user');
+    const entries = await Blog.find({})
+        .populate('user comments');
     res.json(entries);
 });
 
 blogsRouter.get('/:id', async (req, res) => {
-    const entry = await Blog.findById(req.params.id).populate('user');
+    const entry = await Blog.findById(req.params.id).populate('user comments');
     res.json(entry);
 });
 
@@ -66,7 +67,7 @@ blogsRouter.delete('/:id', async (req, res) => {
 
 blogsRouter.put('/:id', async (req, res) => {
     const updated = await Blog.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    await updated.execPopulate('user');
+    await updated.populate('user').execPopulate();
     res.json(updated);
 });
 

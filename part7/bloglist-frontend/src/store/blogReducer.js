@@ -28,7 +28,7 @@ export function createBlog(blog) {
             dispatch(blogCreated(nextBlog));
             dispatch(setNotification(`added blog ${nextBlog.title} by ${nextBlog.author}`));
         } catch (exception) {
-
+            console.log(exception);
         }
     }
 }
@@ -63,6 +63,7 @@ export function blogsFetched(blogs) {
 }
 
 export function blogCreated(blog) {
+    console.log(blog);
     return {
         type: 'NEW_BLOG',
         data: { blog }
