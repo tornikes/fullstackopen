@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 const Blog = ({ blog, onLike, userId, onRemove }) => {
     const [expanded, setExpanded] = useState(false);
@@ -29,7 +30,7 @@ const Blog = ({ blog, onLike, userId, onRemove }) => {
 
     return (
         <div style={blogStyle} className="blog-info">
-            {blog.title} {blog.author} <button onClick={() => setExpanded(!expanded)}>{expanded ? 'Hide' : 'View'}</button>
+            <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link> <button onClick={() => setExpanded(!expanded)}>{expanded ? 'Hide' : 'View'}</button>
             {expanded && <div className="additional-info">
                 <p>{blog.url}</p>
                 <p>Likes <span className="likes">{blog.likes}</span> <button onClick={likeBlog}>Like</button></p>
@@ -40,11 +41,11 @@ const Blog = ({ blog, onLike, userId, onRemove }) => {
     );
 }
 
-// Blog.propTypes = {
-//     onLike: PropTypes.func.isRequired,
-//     onRemove: PropTypes.func.isRequired,
-//     userId: PropTypes.string.isRequired,
-//     blog: PropTypes.object.isRequired 
-// };
+Blog.propTypes = {
+    onLike: PropTypes.func.isRequired,
+    onRemove: PropTypes.func.isRequired,
+    userId: PropTypes.string.isRequired,
+    blog: PropTypes.object.isRequired 
+};
 
 export default Blog

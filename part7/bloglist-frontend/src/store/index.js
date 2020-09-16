@@ -3,10 +3,8 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
 import blogReducer from './blogReducer';
 import notificationReducer from './notificationReducer';
-import getUserReducer from './userReducer';
 import blogService from '../services/blogs';
 import userReducer from './userReducer';
-
 
 export function loadState() {
     try {

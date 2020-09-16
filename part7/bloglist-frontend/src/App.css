@@ -7,6 +7,12 @@
   pointer-events: none;
 }
 
+/* * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+} */
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
@@ -43,4 +49,24 @@
 
 .error {
     color: red;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: palevioletred;
+}
+
+nav button {
+    margin-left: 1.5em;
+}
+
+nav ul {
+    display: flex;
+}
+
+nav ul li {
+    list-style-type: none;
+    margin-left: 1.5em;
 }
