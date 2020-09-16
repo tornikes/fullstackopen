@@ -13,6 +13,14 @@ import { Route, Switch, Redirect, useRouteMatch } from 'react-router-dom';
 import User from './components/User';
 import SingleBlog from './components/SingleBlog';
 import Navbar from './components/Navbar';
+import styled from 'styled-components';
+
+const Container = styled.div`
+    max-width: 1080px;
+    width: 80%;
+    margin: 0 auto;
+    padding: 2rem;
+`;
 
 const App = () => {
     const blogs = useSelector(state => state.blogs);
@@ -59,43 +67,45 @@ const App = () => {
 
     return (
         <div>
-            <Navbar user={user} handleLogout={handleLogout} />
-            {message && <Notification message={message} />}
-            <Switch>
-                <Route path='/users/:id'>
-                    <User match={match} />
-                </Route>
-                <Route path='/users'>
-                    {user ? <Users /> : <Redirect to='/' />}
-                </Route>
-                <Route path='/blogs/:id'>
-                    <SingleBlog match={blogMatch} />
-                </Route>
-                <Route path='/'>
-                    {user === null && <LoginForm
-                        handleUsername={setUsername}
-                        handlePassword={setPassword}
-                        username={username}
-                        password={password}
-                        handleLogin={handleLogin}
-                    />}
-                    {user && <>
-                        <ToggleAble buttonLabel='New Blog' ref={formRef}>
-                            <BlogForm submitBlogForm={submitBlogForm} />
-                        </ToggleAble>
-                    </>}
-                    {user && <h2>blogs</h2>}
-                    {user && blogs.map(blog =>
-                        <Blog
-                            key={blog.id}
-                            blog={blog}
-                            onLike={handleLike}
-                            userId={user.id}
-                            onRemove={handleRemove}
-                        />
-                    )}
-                </Route>
-            </Switch>
+            <Navbar user={user} handleLogout={handleLogout} />            
+            <Container>
+                {message && <Notification message={message} />}
+                <Switch>
+                    <Route path='/users/:id'>
+                        <User match={match} />
+                    </Route>
+                    <Route path='/users'>
+                        {user ? <Users /> : <Redirect to='/' />}
+                    </Route>
+                    <Route path='/blogs/:id'>
+                        <SingleBlog match={blogMatch} />
+                    </Route>
+                    <Route path='/'>
+                        {user === null && <LoginForm
+                            handleUsername={setUsername}
+                            handlePassword={setPassword}
+                            username={username}
+                            password={password}
+                            handleLogin={handleLogin}
+                        />}
+                        {user && <>
+                            <ToggleAble buttonLabel='New Blog' ref={formRef}>
+                                <BlogForm submitBlogForm={submitBlogForm} />
+                            </ToggleAble>
+                        </>}
+                        {user && <h2>blogs</h2>}
+                        {user && blogs.map(blog =>
+                            <Blog
+                                key={blog.id}
+                                blog={blog}
+                                onLike={handleLike}
+                                userId={user.id}
+                                onRemove={handleRemove}
+                            />
+                        )}
+                    </Route>
+                </Switch>
+            </Container>
         </div>
     )
 }
