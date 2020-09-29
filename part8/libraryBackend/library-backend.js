@@ -1,11 +1,12 @@
 require('dotenv').config();
-const { ApolloServer, gql, UserInputError, AuthenticationError } = require('apollo-server');
+const { ApolloServer, gql, UserInputError, AuthenticationError, PubSub } = require('apollo-server');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const Book = require('./models/book');
 const Author = require('./models/author');
 const User = require('./models/user');
-const user = require('./models/user');
+
+const pubsub = new PubSub();
 
 console.log('connecting to', process.env.MONGODB_URI);
 
@@ -71,6 +72,10 @@ const typeDefs = gql`
             username: String!
             password: String!
         ): Token
+    }
+
+    type Subscription {
+        bookAdded: Book!
     }
 `
 
@@ -147,6 +152,7 @@ const resolvers = {
                     invalidArgs: args
                 });
             }
+            pubsub.publish('BOOK_ADDED', { bookAdded: book });
             return book;
         },
         editAuthor: async (root, args, context) => {
@@ -155,6 +161,11 @@ const resolvers = {
             }
             const nextAuthor = await Author.findOneAndUpdate({ name: args.name }, { born: args.setBornTo }, { new: true });
             return nextAuthor;
+        }
+    },
+    Subscription: {
+        bookAdded: {
+            subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
         }
     }
 }
