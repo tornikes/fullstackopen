@@ -25,4 +25,9 @@ function addPatient(patient: NewPatient): Patient {
     return p;
 }
 
-export default { fetchPatients, addPatient };
+function getPatientById(id: string) {
+  const patient = patients.find(p => p.id === id);
+  return patient || null;
+}
+
+export default { fetchPatients, addPatient, getPatientById };
