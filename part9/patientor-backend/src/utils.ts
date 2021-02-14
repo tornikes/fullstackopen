@@ -15,8 +15,8 @@ function toNewPatient(object: any): NewPatient {
 
 function parseEntries(object: any): Entry[] {
   const entries: Entry[] = [];
-  if('entries' in object && Array.isArray(object.entries)) {
-    for(let entry of object.entries) {
+  if(Array.isArray(object)) {
+    for(let entry of object) {
       entries.push(parseEntry(entry));
     }
   }

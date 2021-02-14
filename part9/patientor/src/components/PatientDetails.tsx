@@ -13,7 +13,7 @@ const PatientDetails: React.FC = () => {
   let patient: Patient = patients[id];
 
   useEffect(() => {
-    if(!('entries' in patient)) {
+    if(!patient || ('entries' in patient)) {
       (async () => {
         try {
           patient = await (await axios.get<Patient>(`${apiBaseUrl}/patients/${id}`)).data;
@@ -25,10 +25,28 @@ const PatientDetails: React.FC = () => {
     }
   }, [dispatch]);
   
+  if(!patient) {
+    return null;
+  }
   return (
     <div>
       <p>{patient.name}</p>
       <p>{patient.occupation}</p>
+      { patient.entries.length > 0 &&
+        <div>
+          <h2>Entries:</h2>
+          {patient.entries.map(entry => {
+            return <> 
+              <p>{entry.date} {entry.description}</p>
+              <ul>
+              { entry.diagnosisCodes && entry.diagnosisCodes.map(code => {
+                return <li>{code}</li>
+              })}
+              </ul>
+            </>
+          })}
+        </div>
+      }
     </div>
   );
 };
