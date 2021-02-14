@@ -1,4 +1,4 @@
-import patientsData from '../../data/patients.json';
+import patientsData from '../../data/patients';
 import { NewPatient, Patient, PatientDisplay } from '../types';
 import { v4 } from 'uuid';
 import utils from '../utils';
@@ -10,12 +10,13 @@ const patients: Patient[] = patientsData.map(data => {
 });
 
 function fetchPatients(): PatientDisplay[] {
-    return patients.map(({ id, gender, name, dateOfBirth, occupation }) => ({
+    return patients.map(({ id, gender, name, dateOfBirth, occupation, entries }) => ({
         id,
         name,
         dateOfBirth,
         gender,
-        occupation
+        occupation,
+        entries
     }));
 }
 

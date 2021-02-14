@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */ 
-import { Gender, NewPatient } from './types';
+import { Entry, Gender, NewPatient } from './types';
 
 function toNewPatient(object: any): NewPatient {
     return {
@@ -8,8 +8,27 @@ function toNewPatient(object: any): NewPatient {
         ssn: parseSSN(object.ssn),
         gender: parseGender(object.gender),
         occupation: parseOccupation(object.occupation),
-        dateOfBirth: parseDate(object.dateOfBirth)
+        dateOfBirth: parseDate(object.dateOfBirth),
+        entries: parseEntries(object.entries)
     };
+}
+
+function parseEntries(object: any): Entry[] {
+  const entries: Entry[] = [];
+  if('entries' in object && Array.isArray(object.entries)) {
+    for(let entry of object.entries) {
+      entries.push(parseEntry(entry));
+    }
+  }
+  return entries;
+}
+
+function parseEntry(object: any): Entry {
+  if('type' in object && 
+  ['OccupationalHealthcare', 'Hospital', 'HealthCheck'].includes(object.type)) {
+    return object as Entry;
+  }
+  throw new TypeError('Invalid entry type ' + JSON.stringify(object));
 }
 
 function parseStringProp(prop: string): (input: unknown) => string {

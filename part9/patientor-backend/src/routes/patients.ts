@@ -12,7 +12,7 @@ router.get('/:id', (req, res) => {
   const id = req.params.id;
   const patient = patientService.getPatientById(id);
   if(patient) {
-    const patientData = { ...patient, entries: [] };
+    const patientData = { ...patient };
     return res.send(patientData);
   } else {
     return res.status(404).json({ error: 'Patient not found' });
