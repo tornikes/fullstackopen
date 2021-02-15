@@ -1,15 +1,24 @@
 import axios from 'axios';
 import React, { useEffect } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import { Icon } from 'semantic-ui-react';
 import { apiBaseUrl } from '../constants';
 import { updatePatient, useStateValue } from '../state';
-import { Patient } from '../types';
+import { Diagnosis, Patient } from '../types';
+
+
+function lookupInDiagnoses(code: string, diagnoses: Diagnosis[]): string {
+  for(let diagnosis of diagnoses) {
+    if(diagnosis.code === code) {
+      return diagnosis.name;
+    }
+  }
+  return '';
+}
 
 const PatientDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
-  const [{ patients }, dispatch] = useStateValue();
+  const [{ patients, diagnoses }, dispatch] = useStateValue();
   let patient: Patient = patients[id];
 
   useEffect(() => {
@@ -35,15 +44,15 @@ const PatientDetails: React.FC = () => {
       { patient.entries.length > 0 &&
         <div>
           <h2>Entries:</h2>
-          {patient.entries.map(entry => {
-            return <> 
+          {patient.entries.map((entry, i) => {
+            return <div key={i}> 
               <p>{entry.date} {entry.description}</p>
               <ul>
               { entry.diagnosisCodes && entry.diagnosisCodes.map(code => {
-                return <li>{code}</li>
+                return <li key={code}>{code} {lookupInDiagnoses(code, diagnoses)}</li>
               })}
               </ul>
-            </>
+            </div>
           })}
         </div>
       }
