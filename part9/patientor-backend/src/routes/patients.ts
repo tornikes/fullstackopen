@@ -19,6 +19,23 @@ router.get('/:id', (req, res) => {
   }
 });
 
+router.post('/:id/entries', (req, res) => {
+  const id = req.params['id'];
+  try {
+    const entry = utils.parseEntry(req.body);
+    const result = patientService.addEntryById(id, entry);
+    if(result) {
+      return res.send(result);
+    } else {
+      return res
+        .status(404)
+        .send({ error: `Could not find patient with id ${id}` });
+    }
+  } catch(err) {
+    return res.status(400).send({ error: err.message });
+  }
+});
+
 router.post('/', (req, res) => {
     try {
         const newPatient = utils.toNewPatient(req.body);

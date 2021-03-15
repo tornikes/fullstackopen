@@ -1,5 +1,5 @@
 import patientsData from '../../data/patients';
-import { NewPatient, Patient, PatientDisplay } from '../types';
+import { NewPatient, Patient, PatientDisplay, Entry } from '../types';
 import { v4 } from 'uuid';
 import utils from '../utils';
 
@@ -31,4 +31,13 @@ function getPatientById(id: string) {
   return patient || null;
 }
 
-export default { fetchPatients, addPatient, getPatientById };
+function addEntryById(id: string, entry: Entry) {
+    const patient = patients.find(p => p.id === id);
+    if(patient) {
+        patient.entries.push(entry);
+        return patient.entries;
+    }
+    return null;
+}
+
+export default { fetchPatients, addPatient, getPatientById, addEntryById };
