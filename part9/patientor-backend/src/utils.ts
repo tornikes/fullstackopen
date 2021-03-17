@@ -35,22 +35,22 @@ function parseEntry(object: any): Entry {
         ['OccupationalHealthcare', 'Hospital', 'HealthCheck'].includes(object.type)) {
         const baseObject: any = {
             type: object.type,
-            id: parseId(object),
-            description: parseDescription(object),
-            date: parseDate(object),
-            specialist: parseSpecialist(object)
+            id: parseId(object.id),
+            description: parseDescription(object.description),
+            date: parseDate(object.date),
+            specialist: parseSpecialist(object.specialist)
         };
         if ('diagnosisCodes' in object) {
-            baseObject.diagnosisCodes = parseStringArray(baseObject.diagnosisCodes);
+            baseObject.diagnosisCodes = parseStringArray(object.diagnosisCodes);
         }
 
         switch(object.type) {
             case "OccupationalHealthcare": {
                 const rest: any = {
-                    employerName: parseEmployerName(object)
+                    employerName: parseEmployerName(object.employerName)
                 };
                 if('sickLeave' in object) {
-                    rest.sickLeave = parseSickLeaveDates(object.sickLeave);
+                    rest.sickLeave = parseSickLeaveDate(object.sickLeave);
                 }
                 return { ...baseObject, ...rest } as OccupationalHealthCareEntry;
             }
@@ -62,7 +62,7 @@ function parseEntry(object: any): Entry {
             }
             case "HealthCheck": {
                 const rest: any = {
-                    healthCheckRanking: parseHealthCheckRanking(object)
+                    healthCheckRanking: parseHealthCheckRanking(object.healthCheckRating)
                 }
                 return { ...baseObject, ...rest } as HealthCheckEntry;
             }
@@ -90,16 +90,16 @@ function parseStringArray(input: unknown) {
     return result;
 }
 
-function parseSickLeaveDates(input: unknown) {
-    if(!input || !Array.isArray(input)) {
-        throw new TypeError(`SickLeave is not an array`);
-    }
-    const result = [];
-    for(let item of input) {
-        result.push(parseSickLeaveDate(item));
-    }
-    return result;
-}
+// function parseSickLeaveDates(input: unknown) {
+//     if(!input || !Array.isArray(input)) {
+//         throw new TypeError(`SickLeave is not an array`);
+//     }
+//     const result = [];
+//     for(let item of input) {
+//         result.push(parseSickLeaveDate(item));
+//     }
+//     return result;
+// }
 
 function parseSickLeaveDate(input: any) {
     if(typeof input !== 'object' || 
@@ -122,7 +122,7 @@ function parseDischarge(input: any) {
             throw new TypeError('Incorrect sick leave date');
     }
     return {
-        date: parseDate(input),
+        date: parseDate(input.date),
         criteria: parseStringProp('criteria')(input.criteria)
     }
 }
