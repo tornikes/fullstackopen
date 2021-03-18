@@ -27,8 +27,22 @@ const AddEntryForm: React.FC<Props> = ({ onSubmit }: Props) => {
                     healthCheckRating: 0
                 }}
                 onSubmit={onSubmit}
+                validate={values => {
+                    const errors: any = {};
+                    const requiredField = 'Field is required';
+                    if(!values.description) {
+                        errors.description = requiredField;
+                    }
+                    if(!values.specialist) {
+                        errors.specialist = requiredField;
+                    }
+                    if(!values.date) {
+                        errors.date = requiredField;
+                    }
+                    return errors;
+                }}
             >
-                {({ values, setFieldValue, setFieldTouched }) => (
+                {({ values, dirty, isValid, setFieldValue, setFieldTouched }) => (
                     <Form>
                         <Field
                             label="description"
@@ -57,7 +71,10 @@ const AddEntryForm: React.FC<Props> = ({ onSubmit }: Props) => {
                             min={0}
                             max={3}
                         />
-                        <Button type="submit">Submit</Button>
+                        <Button 
+                            type="submit"
+                            disabled={!dirty || !isValid}
+                        >Submit</Button>
                         <pre>{JSON.stringify(values, null, 2)}</pre>
                     </Form>
                 )}
