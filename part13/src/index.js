@@ -37,6 +37,7 @@ Note.init(
 
 app.get('/api/notes', async (req, res) => {
   const notes = await Note.findAll();
+  console.log(notes);
   res.json(notes);
 });
 
