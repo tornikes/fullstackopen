@@ -2,6 +2,8 @@ const router = require('express').Router();
 
 const { Blog } = require('../models');
 
+const { BadRequestError, NotFountError } = require('../errors');
+
 router.get('/', async (req, res) => {
   const blogs = await Blog.findAll();
   res.send(blogs);
@@ -22,7 +24,7 @@ router.post('/', async (req, res) => {
     const blog = await Blog.create(req.body);
     return res.send(blog);
   } catch {
-    return res.status(400).send({ message: 'Bad request' });
+    throw new BadRequestError();
   }
 });
 
@@ -37,7 +39,7 @@ router.delete('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
   const blog = await Blog.findByPk(req.params.id);
   if (!blog) {
-    throw new Error('oopsie');
+    throw new NotFountError();
   }
   blog.likes = Number(req.body.likes);
   await blog.save();
