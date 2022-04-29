@@ -1,11 +1,18 @@
 const router = require('express').Router();
 
-const { Blog } = require('../models');
+const { Blog, User } = require('../models');
 
 const { BadRequestError, NotFountError } = require('../errors');
+const tokenExtractor = require('../middleware/tokenExtractor');
 
 router.get('/', async (req, res) => {
-  const blogs = await Blog.findAll();
+  const blogs = await Blog.findAll({
+    attributes: { exclude: ['userId'] },
+    include: {
+      model: User,
+      attributes: ['name'],
+    },
+  });
   res.send(blogs);
 });
 
@@ -19,19 +26,31 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', tokenExtractor, async (req, res) => {
   try {
-    const blog = await Blog.create(req.body);
+    const user = await User.findByPk(req.decodedToken.id);
+    const blog = await Blog.create({
+      ...req.body,
+      userId: user.id,
+      date: new Date(),
+    });
     return res.send(blog);
   } catch {
     throw new BadRequestError();
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', tokenExtractor, async (req, res) => {
+  const user = await User.findByPk(req.decodedToken.id);
+
+  if (!user) {
+    throw new BadRequestError('Unknown user');
+  }
   const blog = await Blog.findByPk(req.params.id);
-  if (blog) {
+  if (blog && user.id === blog.userId) {
     await blog.destroy();
+  } else {
+    throw new BadRequestError();
   }
   return res.status(200).send({ message: 'Removed' });
 });
