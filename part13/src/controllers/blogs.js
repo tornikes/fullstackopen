@@ -2,6 +2,7 @@ const router = require('express').Router();
 const { Blog, User } = require('../models');
 
 const { Op } = require('sequelize');
+const { sequelize } = require('../util/db');
 
 const { BadRequestError, NotFountError } = require('../errors');
 const tokenExtractor = require('../middleware/tokenExtractor');
@@ -30,6 +31,20 @@ router.get('/', async (req, res) => {
     order: [['likes', 'ASC']],
   });
   res.send(blogs);
+});
+
+router.get('/authors', async (req, res) => {
+  const response = await Blog.findAll({
+    attributes: [
+      'author',
+      [sequelize.fn('COUNT', sequelize.col('id')), 'number_of_blogs'],
+      [sequelize.fn('SUM', sequelize.col('likes')), 'total_likes'],
+    ],
+    group: 'author',
+    order: [[sequelize.literal('total_likes'), 'DESC']],
+  });
+
+  res.send(response);
 });
 
 router.get('/:id', async (req, res) => {
