@@ -1,17 +1,33 @@
 const router = require('express').Router();
-
 const { Blog, User } = require('../models');
+
+const { Op } = require('sequelize');
 
 const { BadRequestError, NotFountError } = require('../errors');
 const tokenExtractor = require('../middleware/tokenExtractor');
 
 router.get('/', async (req, res) => {
+  const where = {};
+
+  if (req.query.search) {
+    where[Op.or] = {
+      title: {
+        [Op.iLike]: `%${req.query.search.toLowerCase()}%`,
+      },
+      author: {
+        [Op.iLike]: `%${req.query.search.toLowerCase()}%`,
+      },
+    };
+  }
+
   const blogs = await Blog.findAll({
     attributes: { exclude: ['userId'] },
     include: {
       model: User,
       attributes: ['name'],
     },
+    where,
+    order: [['likes', 'ASC']],
   });
   res.send(blogs);
 });
