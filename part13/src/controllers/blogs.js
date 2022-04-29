@@ -34,4 +34,14 @@ router.delete('/:id', async (req, res) => {
   return res.status(200).send({ message: 'Removed' });
 });
 
+router.put('/:id', async (req, res) => {
+  const blog = await Blog.findByPk(req.params.id);
+  if (!blog) {
+    throw new Error('oopsie');
+  }
+  blog.likes = Number(req.body.likes);
+  await blog.save();
+  res.send({ blog });
+});
+
 module.exports = router;
