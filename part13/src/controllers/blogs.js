@@ -66,7 +66,8 @@ router.post('/', tokenExtractor, async (req, res) => {
       date: new Date(),
     });
     return res.send(blog);
-  } catch {
+  } catch (err) {
+    console.log(err);
     throw new BadRequestError();
   }
 });
