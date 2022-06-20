@@ -1,17 +1,18 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import AppBar from './AppBar';
 import RepositoryList from './RepositoryList';
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 25,
+    marginTop: 0,
   },
 });
 
 function Main() {
   return (
     <View style={styles.container}>
-      <Text>Rate Repository Application</Text>
+      <AppBar />
       <RepositoryList />
     </View>
   );
