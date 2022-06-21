@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import { RepositoryInfo } from './RepositoryList';
+import TText from './TText';
 
 const styles = StyleSheet.create({
   outer: {
@@ -51,36 +52,38 @@ function RepositoryItem({ item }: RepositoryItemProps) {
       <View style={styles.coreInfo}>
         <Image source={{ uri: item.ownerAvatarUrl }} style={styles.avatar} />
         <View style={styles.textInfo}>
-          <Text style={[styles.bolded, styles.hasMB]}>{item.fullName}</Text>
-          <Text style={[styles.hasMB]}>{item.description}</Text>
-          <Text style={[styles.languageTag, styles.hasMB]}>
+          <TText fontWeight="bold" style={[styles.hasMB]}>
+            {item.fullName}
+          </TText>
+          <TText style={[styles.hasMB]}>{item.description}</TText>
+          <TText style={[styles.languageTag, styles.hasMB]}>
             {item.language}
-          </Text>
+          </TText>
         </View>
       </View>
       <View style={styles.statisticsBar}>
         <View>
-          <Text style={[styles.bolded, styles.centred]}>
+          <TText fontWeight="bold" style={[styles.centred]}>
             {formatNumber(item.stargazersCount)}
-          </Text>
+          </TText>
           <Text>Stars</Text>
         </View>
         <View>
-          <Text style={[styles.bolded, styles.centred]}>
+          <TText fontWeight="bold" style={[styles.centred]}>
             {formatNumber(item.forksCount)}
-          </Text>
+          </TText>
           <Text>Forks</Text>
         </View>
         <View>
-          <Text style={[styles.bolded, styles.centred]}>
+          <TText fontWeight="bold" style={[styles.centred]}>
             {formatNumber(item.reviewCount)}
-          </Text>
+          </TText>
           <Text>Reviews</Text>
         </View>
         <View>
-          <Text style={[styles.bolded, styles.centred]}>
+          <TText fontWeight="bold" style={[styles.centred]}>
             {formatNumber(item.ratingAverage)}
-          </Text>
+          </TText>
           <Text>Rating</Text>
         </View>
       </View>
