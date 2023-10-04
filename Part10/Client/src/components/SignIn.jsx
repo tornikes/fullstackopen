@@ -42,14 +42,6 @@ function SignIn() {
   const [signIn] = useSignIn();
   const navigate = useNavigate();
 
-  const validationSchema = yup.object().shape({
-    username: yup.string().required("Username is required"),
-    password: yup
-      .string()
-      .test("len", "Must be at least 8 characters", (val) => val.length > 5)
-      .required("Password is required"),
-  });
-
   async function formSubmissionHandler(values) {
     try {
       await signIn(values);
@@ -58,6 +50,18 @@ function SignIn() {
       console.log(err);
     }
   }
+
+  return <SignInForm formSubmissionHandler={formSubmissionHandler} />;
+}
+
+export function SignInForm({ formSubmissionHandler }) {
+  const validationSchema = yup.object().shape({
+    username: yup.string().required("Username is required"),
+    password: yup
+      .string()
+      .test("len", "Must be at least 8 characters", (val) => val.length > 5)
+      .required("Password is required"),
+  });
 
   return (
     <View style={styles.formContainer}>
