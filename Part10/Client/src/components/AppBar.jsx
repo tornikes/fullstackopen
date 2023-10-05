@@ -1,7 +1,7 @@
 import { View, StyleSheet, Pressable, Text } from "react-native";
 import Constants from "expo-constants";
 import theme from "../theme";
-import { Link } from "react-router-native";
+import { Link, useNavigate } from "react-router-native";
 import { ScrollView } from "react-native";
 import { useApolloClient, useQuery } from "@apollo/client";
 import { ME } from "../graphql/queries";
@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
 
 function AppBar() {
   const { data, loading } = useQuery(ME);
+  const navigate = useNavigate();
   const isLoggedIn = data?.me && !loading;
 
   const authStorage = useAuthStorage();
@@ -33,6 +34,7 @@ function AppBar() {
   async function handleLogout() {
     await authStorage.removeAccessToken();
     apolloClient.resetStore();
+    navigate("/");
   }
 
   return (
@@ -43,6 +45,13 @@ function AppBar() {
             <Text style={styles.text}>Repositories</Text>
           </Link>
         </Pressable>
+        {isLoggedIn && (
+          <Pressable style={styles.navigationItem}>
+            <Link to="/create">
+              <Text style={styles.text}>Create a Review</Text>
+            </Link>
+          </Pressable>
+        )}
         {isLoggedIn ? (
           <Pressable onPress={handleLogout}>
             <Text style={styles.text}>Log out</Text>

@@ -1,42 +1,11 @@
 import { Formik } from "formik";
-import { View, StyleSheet, Pressable } from "react-native";
-import TText from "./TText";
+import { View } from "react-native";
 import FormikTextInput from "./FormikTextInput";
 import * as yup from "yup";
 import useSignIn from "../hooks/useSignIn";
 import { useNavigate } from "react-router-native";
-
-const styles = StyleSheet.create({
-  formContainer: {
-    paddingTop: 15,
-    paddingHorizontal: 15,
-  },
-  formInput: {
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "gray",
-    marginBottom: 5,
-    paddingVertical: 10,
-    fontSize: 15,
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  submitButton: {
-    backgroundColor: "#0275d8",
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "center",
-    borderRadius: 20,
-    paddingVertical: 15,
-  },
-  buttonText: {
-    fontSize: 15,
-    color: "white",
-    fontWeight: "700",
-  },
-});
+import { FormContainer } from "./formComponents/FormContainer";
+import FormButton from "./formComponents/FormButton";
 
 function SignIn() {
   const [signIn] = useSignIn();
@@ -64,7 +33,7 @@ export function SignInForm({ formSubmissionHandler }) {
   });
 
   return (
-    <View style={styles.formContainer}>
+    <FormContainer>
       <Formik
         initialValues={{ username: "", password: "" }}
         onSubmit={formSubmissionHandler}
@@ -72,26 +41,17 @@ export function SignInForm({ formSubmissionHandler }) {
       >
         {({ handleSubmit }) => (
           <View>
-            <FormikTextInput
-              placeholder="Username"
-              name="username"
-              style={styles.formInput}
-            />
+            <FormikTextInput placeholder="Username" name="username" />
             <FormikTextInput
               secureTextEntry
               placeholder="Password"
               name="password"
-              style={styles.formInput}
             />
-            <View style={styles.buttonContainer}>
-              <Pressable style={styles.submitButton} onPress={handleSubmit}>
-                <TText style={styles.buttonText}>Sign In</TText>
-              </Pressable>
-            </View>
+            <FormButton label={"Sign In"} handlePress={handleSubmit} />
           </View>
         )}
       </Formik>
-    </View>
+    </FormContainer>
   );
 }
 
