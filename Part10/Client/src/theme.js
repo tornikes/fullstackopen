@@ -7,6 +7,7 @@ const theme = {
     primary: "#0366d6",
     appbarBackground: "#24292e",
     mainBackground: "#e1e4e8",
+    separatorColor: "#e1e4e8",
     errorIndicator: "#d73a4a",
   },
   fontSizes: {

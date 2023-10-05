@@ -1,9 +1,15 @@
-import { View, Text, Image, StyleSheet } from "react-native";
+import * as Linking from "expo-linking";
+import { View, Text, Image, StyleSheet, Pressable } from "react-native";
 import TText from "./TText";
 
 const styles = StyleSheet.create({
   outer: {
     paddingTop: 5,
+    backgroundColor: "white",
+  },
+  outerWhenSingularView: {
+    marginBottom: 10,
+    paddingBottom: 10,
   },
   avatar: {
     width: 80,
@@ -38,11 +44,33 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     paddingVertical: 10,
   },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    paddingHorizontal: 10,
+    marginTop: 10,
+  },
+  redirectButton: {
+    backgroundColor: "#0275d8",
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "center",
+    borderRadius: 5,
+    paddingVertical: 15,
+  },
+  buttonText: {
+    fontSize: 15,
+    color: "white",
+    fontWeight: "700",
+  },
 });
 
-function RepositoryItem({ item }) {
+function RepositoryItem({ item, showRedirectButton }) {
   return (
-    <View style={styles.outer} testID="repositoryItem">
+    <View
+      style={[styles.outer, showRedirectButton && styles.outerWhenSingularView]}
+      testID="repositoryItem"
+    >
       <View style={styles.coreInfo}>
         <Image source={{ uri: item.ownerAvatarUrl }} style={styles.avatar} />
         <View style={styles.textInfo}>
@@ -81,6 +109,16 @@ function RepositoryItem({ item }) {
           <Text>Rating</Text>
         </View>
       </View>
+      {showRedirectButton && (
+        <Pressable
+          style={styles.buttonContainer}
+          onPress={() => Linking.openURL(item.url)}
+        >
+          <View style={styles.redirectButton}>
+            <TText style={styles.buttonText}>Open in Github</TText>
+          </View>
+        </Pressable>
+      )}
     </View>
   );
 }
