@@ -46,11 +46,18 @@ function AppBar() {
           </Link>
         </Pressable>
         {isLoggedIn && (
-          <Pressable style={styles.navigationItem}>
-            <Link to="/create">
-              <Text style={styles.text}>Create a Review</Text>
-            </Link>
-          </Pressable>
+          <>
+            <Pressable style={styles.navigationItem}>
+              <Link to="/create">
+                <Text style={styles.text}>Create a Review</Text>
+              </Link>
+            </Pressable>
+            <Pressable style={styles.navigationItem}>
+              <Link to="/reviews">
+                <Text style={styles.text}>My Reviews</Text>
+              </Link>
+            </Pressable>
+          </>
         )}
         {isLoggedIn ? (
           <Pressable onPress={handleLogout}>
