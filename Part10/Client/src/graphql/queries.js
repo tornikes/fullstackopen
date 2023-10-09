@@ -10,8 +10,11 @@ export const ME = gql`
 `;
 
 export const GET_REPOSITORIES = gql`
-  query {
-    repositories {
+  query (
+    $orderBy: AllRepositoriesOrderBy = CREATED_AT
+    $orderDirection: OrderDirection = DESC
+  ) {
+    repositories(orderBy: $orderBy, orderDirection: $orderDirection) {
       edges {
         node {
           id
