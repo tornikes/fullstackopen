@@ -63,6 +63,13 @@ function AppBar() {
             </Link>
           </Pressable>
         )}
+        {!isLoggedIn && (
+          <Pressable style={styles.navigationItem}>
+            <Link to="/register">
+              <Text style={styles.text}>Sign Up</Text>
+            </Link>
+          </Pressable>
+        )}
       </ScrollView>
     </View>
   );
