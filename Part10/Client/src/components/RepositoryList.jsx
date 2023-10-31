@@ -9,7 +9,7 @@ import { useEffect } from "react";
 
 function RepositoryList() {
   const [sortingMethod, setSortingMethod] = useState("CREATED_AT");
-  const { repositories, refetch } = useRepositories();
+  const { repositories, refetch, fetchMore } = useRepositories();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,6 +29,10 @@ function RepositoryList() {
   const repositoryNodes = repositories
     ? repositories.edges.map((edge) => edge.node)
     : [];
+
+  function onEndReached() {
+    fetchMore();
+  }
 
   return (
     <>
@@ -58,6 +62,7 @@ function RepositoryList() {
             <RepositoryItem item={item} />
           </Pressable>
         )}
+        onEndReached={onEndReached}
       />
     </>
   );

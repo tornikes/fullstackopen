@@ -9,13 +9,17 @@ import ReviewItem from "./ReviewItem";
 function SingleRepository() {
   const { id } = useParams();
   const { repository, loading } = useRepository(id);
-  const { reviews } = useReviews(id);
+  const { reviews, fetchMore } = useReviews(id);
 
   if (loading || !repository) {
     return null;
   }
 
   const reviewItems = reviews ? reviews.edges.map((edge) => edge.node) : [];
+
+  function onEndReached() {
+    fetchMore();
+  }
 
   return (
     <FlatList
@@ -26,6 +30,7 @@ function SingleRepository() {
         <RepositoryItem item={repository} showRedirectButton />
       )}
       ItemSeparatorComponent={ItemSeparator}
+      onEndReached={onEndReached}
     />
   );
 }
